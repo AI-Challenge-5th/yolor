@@ -70,7 +70,7 @@ def check_file(file):
 
 
 def check_dataset(dict):
-    raise Exception('Dataset not found.')
+    pass
 
 
 def make_divisible(x, divisor):
