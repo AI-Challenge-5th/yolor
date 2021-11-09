@@ -346,8 +346,7 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
             # Write
             with open(results_file, 'a') as f:
                 f.write(s + '%10.4g' * 7 % results + '\n')  # P, R, mAP@.5, mAP@.5-.95, val_loss(box, obj, cls)
-            if len(opt.name) and opt.bucket:
-                os.system('gsutil cp %s gs://%s/results/results%s.txt' % (results_file, opt.bucket, opt.name))
+            #if len(opt.name) and opt.bucket:
 
             # Log
             tags = ['train/box_loss', 'train/obj_loss', 'train/cls_loss',  # train loss
@@ -438,7 +437,6 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
                 os.rename(f1, f2)  # rename
                 if str(f2).endswith('.pt'):  # is *.pt
                     strip_optimizer(f2)  # strip optimizer
-                    os.system('gsutil cp %s gs://%s/weights' % (f2, opt.bucket)) if opt.bucket else None  # upload
         # Finish
         if plots:
             plot_results(save_dir=save_dir)  # save as results.png
@@ -572,8 +570,6 @@ if __name__ == '__main__':
         opt.notest, opt.nosave = True, True  # only test/save final epoch
         # ei = [isinstance(x, (int, float)) for x in hyp.values()]  # evolvable indices
         yaml_file = Path(opt.save_dir) / 'hyp_evolved.yaml'  # save best result here
-        if opt.bucket:
-            os.system('gsutil cp gs://%s/evolve.txt .' % opt.bucket)  # download evolve.txt if exists
 
         for _ in range(300):  # generations to evolve
             if Path('evolve.txt').exists():  # if evolve.txt exists: select best hyps and mutate

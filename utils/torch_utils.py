@@ -29,7 +29,6 @@ def torch_distributed_zero_first(local_rank: int):
 
 
 def init_torch_seeds(seed=0):
-    # Speed-reproducibility tradeoff https://pytorch.org/docs/stable/notes/randomness.html
     torch.manual_seed(seed)
     if seed == 0:  # slower, more reproducible
         cudnn.deterministic = True
@@ -117,7 +116,6 @@ def prune(model, amount=0.3):
 
 
 def fuse_conv_and_bn(conv, bn):
-    # Fuse convolution and batchnorm layers https://tehnokv.com/posts/fusing-batchnorm-and-conv/
     fusedconv = nn.Conv2d(conv.in_channels,
                           conv.out_channels,
                           kernel_size=conv.kernel_size,
@@ -204,14 +202,6 @@ def copy_attr(a, b, include=(), exclude=()):
 
 
 class ModelEMA:
-    """ Model Exponential Moving Average from https://github.com/rwightman/pytorch-image-models
-    Keep a moving average of everything in the model state_dict (parameters and buffers).
-    This is intended to allow functionality like
-    https://www.tensorflow.org/api_docs/python/tf/train/ExponentialMovingAverage
-    A smoothed version of the weights is necessary for some training schemes to perform well.
-    This class is sensitive where it is initialized in the sequence of model init,
-    GPU assignment and distributed training wrappers.
-    """
 
     def __init__(self, model, decay=0.9999, updates=0):
         # Create EMA

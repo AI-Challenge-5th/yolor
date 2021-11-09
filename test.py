@@ -340,5 +340,4 @@ if __name__ == '__main__':
                 r, _, t = test(opt.data, weights, opt.batch_size, i, opt.conf_thres, opt.iou_thres, opt.save_json)
                 y.append(r + t)  # results and times
             np.savetxt(f, y, fmt='%10.4g')  # save
-        os.system('zip -r study.zip study_*.txt')
         # utils.general.plot_study_txt(f, x)  # plot

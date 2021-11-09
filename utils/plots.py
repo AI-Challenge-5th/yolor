@@ -349,14 +349,6 @@ def plot_results(start=0, stop=0, bucket='', id=(), labels=(), save_dir=''):
     ax = ax.ravel()
     s = ['Box', 'Objectness', 'Classification', 'Precision', 'Recall',
          'val Box', 'val Objectness', 'val Classification', 'mAP@0.5', 'mAP@0.5:0.95']
-    if bucket:
-        # os.system('rm -rf storage.googleapis.com')
-        # files = ['https://storage.googleapis.com/%s/results%g.txt' % (bucket, x) for x in id]
-        files = ['%g.txt' % x for x in id]
-        c = ('gsutil cp ' + '%s ' * len(files) + '.') % tuple('gs://%s/%g.txt' % (bucket, x) for x in id)
-        os.system(c)
-    else:
-        files = glob.glob(str(Path(save_dir) / '*.txt')) + glob.glob('../../Downloads/results*.txt')
     assert len(files), 'No results.txt files found in %s, nothing to plot.' % os.path.abspath(save_dir)
     for fi, f in enumerate(files):
         try:

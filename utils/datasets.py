@@ -488,7 +488,6 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
                         assert cv2.imwrite(f, img[b[1]:b[3], b[0]:b[2]]), 'Failure extracting classifier boxes'
             else:
                 ne += 1  # print('empty labels for image %s' % self.img_files[i])  # file empty
-                # os.system("rm '%s' '%s'" % (self.img_files[i], self.label_files[i]))  # remove
 
             if rank in [-1, 0]:
                 pbar.desc = 'Scanning labels %s (%g found, %g missing, %g empty, %g duplicate, for %g images)' % (
@@ -771,7 +770,6 @@ class LoadImagesAndLabels9(Dataset):  # for training/testing
                         assert cv2.imwrite(f, img[b[1]:b[3], b[0]:b[2]]), 'Failure extracting classifier boxes'
             else:
                 ne += 1  # print('empty labels for image %s' % self.img_files[i])  # file empty
-                # os.system("rm '%s' '%s'" % (self.img_files[i], self.label_files[i]))  # remove
 
             if rank in [-1, 0]:
                 pbar.desc = 'Scanning labels %s (%g found, %g missing, %g empty, %g duplicate, for %g images)' % (

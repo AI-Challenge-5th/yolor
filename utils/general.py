@@ -7,7 +7,6 @@ import os
 import platform
 import random
 import re
-import subprocess
 import time
 from pathlib import Path
 
@@ -49,12 +48,7 @@ def get_latest_run(search_dir='.'):
 
 
 def check_git_status():
-    # Suggest 'git pull' if repo is out of date
-    if platform.system() in ['Linux', 'Darwin'] and not os.path.isfile('/.dockerenv'):
-        s = subprocess.check_output('if [ -d .git ]; then git fetch && git status -uno; fi', shell=True).decode('utf-8')
-        if 'Your branch is behind' in s:
-            print(s[s.find('Your branch is behind'):s.find('\n\n')] + '\n')
-
+    pass
 
 def check_img_size(img_size, s=32):
     # Verify img_size is a multiple of stride s
@@ -76,23 +70,7 @@ def check_file(file):
 
 
 def check_dataset(dict):
-    # Download dataset if not found locally
-    val, s = dict.get('val'), dict.get('download')
-    if val and len(val):
-        val = [Path(x).resolve() for x in (val if isinstance(val, list) else [val])]  # val path
-        if not all(x.exists() for x in val):
-            print('\nWARNING: Dataset not found, nonexistent paths: %s' % [str(x) for x in val if not x.exists()])
-            if s and len(s):  # download script
-                print('Downloading %s ...' % s)
-                if s.startswith('http') and s.endswith('.zip'):  # URL
-                    f = Path(s).name  # filename
-                    torch.hub.download_url_to_file(s, f)
-                    r = os.system('unzip -q %s -d ../ && rm %s' % (f, f))  # unzip
-                else:  # bash script
-                    r = os.system(s)
-                print('Dataset autodownload %s\n' % ('success' if r == 0 else 'failure'))  # analyze return value
-            else:
-                raise Exception('Dataset not found.')
+    raise Exception('Dataset not found.')
 
 
 def make_divisible(x, divisor):
@@ -377,10 +355,6 @@ def print_mutation(hyp, results, yaml_file='hyp_evolved.yaml', bucket=''):
     c = '%10.4g' * len(results) % results  # results (P, R, mAP@0.5, mAP@0.5:0.95, val_losses x 3)
     print('\n%s\n%s\nEvolved fitness: %s\n' % (a, b, c))
 
-    if bucket:
-        url = 'gs://%s/evolve.txt' % bucket
-        if gsutil_getsize(url) > (os.path.getsize('evolve.txt') if os.path.exists('evolve.txt') else 0):
-            os.system('gsutil cp %s .' % url)  # download evolve.txt if larger than local
 
     with open('evolve.txt', 'a') as f:  # append result
         f.write(c + b + '\n')
@@ -397,8 +371,6 @@ def print_mutation(hyp, results, yaml_file='hyp_evolved.yaml', bucket=''):
         f.write('# Hyperparameter Evolution Results\n# Generations: %g\n# Metrics: ' % len(x) + c + '\n\n')
         yaml.dump(hyp, f, sort_keys=False)
 
-    if bucket:
-        os.system('gsutil cp evolve.txt %s gs://%s' % (yaml_file, bucket))  # upload
 
 
 def apply_classifier(x, model, img, im0):

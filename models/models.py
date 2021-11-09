@@ -44,7 +44,7 @@ def create_modules(module_defs, img_size, cfg):
             else:
                 routs.append(i)  # detection output (goes into yolo layer)
 
-            if mdef['activation'] == 'leaky':  # activation study https://github.com/ultralytics/yolov3/issues/441
+            if mdef['activation'] == 'leaky':  # activation study htps://github.com/ultralytics/yolov3/issues/441
                 modules.add_module('activation', nn.LeakyReLU(0.1, inplace=True))
             elif mdef['activation'] == 'swish':
                 modules.add_module('activation', Swish())
@@ -82,7 +82,7 @@ def create_modules(module_defs, img_size, cfg):
             else:
                 routs.append(i)  # detection output (goes into yolo layer)
 
-            if mdef['activation'] == 'leaky':  # activation study https://github.com/ultralytics/yolov3/issues/441
+            if mdef['activation'] == 'leaky':  # activation study htps://github.com/ultralytics/yolov3/issues/441
                 modules.add_module('activation', nn.LeakyReLU(0.1, inplace=True))
             elif mdef['activation'] == 'swish':
                 modules.add_module('activation', Swish())
@@ -166,7 +166,7 @@ def create_modules(module_defs, img_size, cfg):
             filters = output_filters[-1]
             modules = nn.BatchNorm2d(filters, momentum=0.03, eps=1E-4)
             if i == 0 and filters == 3:  # normalize RGB image
-                # imagenet mean and var https://pytorch.org/docs/stable/torchvision/models.html#classification
+                # imagenet mean and var htps://pytorch.org/docs/stable/torchvision/models.html#classification
                 modules.running_mean = torch.tensor([0.485, 0.456, 0.406])
                 modules.running_var = torch.tensor([0.0524, 0.0502, 0.0506])
 
@@ -278,7 +278,7 @@ def create_modules(module_defs, img_size, cfg):
                                 layers=layers,  # output layers
                                 stride=stride[yolo_index])
 
-            # Initialize preceding Conv2d() bias (https://arxiv.org/pdf/1708.02002.pdf section 3.3)
+            # Initialize preceding Conv2d() bias (htps://arxiv.org/pdf/1708.02002.pdf section 3.3)
             try:
                 j = layers[yolo_index] if 'from' in mdef else -2
                 bias_ = module_list[j][0].bias  # shape(255,)
@@ -311,7 +311,7 @@ def create_modules(module_defs, img_size, cfg):
                                 layers=layers,  # output layers
                                 stride=stride[yolo_index])
 
-            # Initialize preceding Conv2d() bias (https://arxiv.org/pdf/1708.02002.pdf section 3.3)
+            # Initialize preceding Conv2d() bias (htps://arxiv.org/pdf/1708.02002.pdf section 3.3)
             try:
                 j = layers[yolo_index] if 'from' in mdef else -1
                 bias_ = module_list[j][0].bias  # shape(255,)
@@ -369,7 +369,7 @@ class YOLOLayer(nn.Module):
             self.anchor_wh = self.anchor_wh.to(device)
 
     def forward(self, p, out):
-        ASFF = False  # https://arxiv.org/abs/1911.09516
+        ASFF = False  # htps://arxiv.org/abs/1911.09516
         if ASFF:
             i, n = self.index, self.nl  # index in layers, number of layers
             p = out[self.layers[i]]
@@ -462,7 +462,7 @@ class JDELayer(nn.Module):
             self.anchor_wh = self.anchor_wh.to(device)
 
     def forward(self, p, out):
-        ASFF = False  # https://arxiv.org/abs/1911.09516
+        ASFF = False  # htps://arxiv.org/abs/1911.09516
         if ASFF:
             i, n = self.index, self.nl  # index in layers, number of layers
             p = out[self.layers[i]]
@@ -532,7 +532,7 @@ class Darknet(nn.Module):
         self.yolo_layers = get_yolo_layers(self)
         # torch_utils.initialize_weights(self)
 
-        # Darknet Header https://github.com/AlexeyAB/darknet/issues/2914#issuecomment-496675346
+        # Darknet Header htps://github.com/AlexeyAB/darknet/issues/2914#issuecomment-496675346
         self.version = np.array([0, 2, 5], dtype=np.int32)  # (int32) version info: major, minor, revision
         self.seen = np.array([0], dtype=np.int64)  # (int64) number of images seen during training
         self.info(verbose) if not ONNX_EXPORT else None  # print model description
@@ -541,7 +541,7 @@ class Darknet(nn.Module):
 
         if not augment:
             return self.forward_once(x)
-        else:  # Augment images (inference and test only) https://github.com/ultralytics/yolov3/issues/931
+        else:  # Augment images (inference and test only) htps://github.com/ultralytics/yolov3/issues/931
             img_size = x.shape[-2:]  # height, width
             s = [0.83, 0.67]  # scales
             y = []
@@ -575,7 +575,7 @@ class Darknet(nn.Module):
             str = ''
 
         # Augment images (inference and test only)
-        if augment:  # https://github.com/ultralytics/yolov3/issues/931
+        if augment:  # htps://github.com/ultralytics/yolov3/issues/931
             nb = x.shape[0]  # batch size
             s = [0.83, 0.67]  # scales
             x = torch.cat((x,
@@ -661,7 +661,7 @@ def load_darknet_weights(self, weights, cutoff=-1):
 
     # Read weights file
     with open(weights, 'rb') as f:
-        # Read Header https://github.com/AlexeyAB/darknet/issues/2914#issuecomment-496675346
+        # Read Header htps://github.com/AlexeyAB/darknet/issues/2914#issuecomment-496675346
         self.version = np.fromfile(f, dtype=np.int32, count=3)  # (int32) version info: major, minor, revision
         self.seen = np.fromfile(f, dtype=np.int64, count=1)  # (int64) number of images seen during training
 
@@ -703,7 +703,7 @@ def save_weights(self, path='model.weights', cutoff=-1):
     # Converts a PyTorch model to Darket format (*.pt to *.weights)
     # Note: Does not work if model.fuse() is applied
     with open(path, 'wb') as f:
-        # Write Header https://github.com/AlexeyAB/darknet/issues/2914#issuecomment-496675346
+        # Write Header htps://github.com/AlexeyAB/darknet/issues/2914#issuecomment-496675346
         self.version.tofile(f)  # (int32) version info: major, minor, revision
         self.seen.tofile(f)  # (int64) number of images seen during training
 
@@ -740,22 +740,4 @@ def convert(cfg='cfg/yolov3-spp.cfg', weights='weights/yolov3-spp.weights', save
         print(e)
 
 def attempt_download(weights):
-    # Attempt to download pretrained weights if not found locally
-    weights = weights.strip()
-    msg = weights + ' missing, try downloading from https://drive.google.com/open?id=1LezFG5g3BCW6iYaV89B2i64cqEUZD7e0'
-
-    if len(weights) > 0 and not os.path.isfile(weights):
-        d = {''}
-
-        file = Path(weights).name
-        if file in d:
-            r = gdrive_download(id=d[file], name=weights)
-        else:  # download from pjreddie.com
-            url = 'https://pjreddie.com/media/files/' + file
-            print('Downloading ' + url)
-            r = os.system('curl -f ' + url + ' -o ' + weights)
-
-        # Error check
-        if not (r == 0 and os.path.exists(weights) and os.path.getsize(weights) > 1E6):  # weights exist and > 1MB
-            os.system('rm ' + weights)  # remove partial downloads
-            raise Exception(msg)
+    pass
