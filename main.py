@@ -94,7 +94,8 @@ def test(data,
     
     # Configure
     model.eval()
-    is_coco = data.endswith('coco.yaml')  # is COCO dataset
+#     is_coco = data.endswith('coco.yaml')  # is COCO dataset
+    is_coco = True  # is COCO dataset
     with open(data) as f:
         data = yaml.load(f, Loader=yaml.FullLoader)  # model dict
     check_dataset(data)  # check
