@@ -216,7 +216,7 @@ def test(data,
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='main.py')
-    parser.add_argument('--weights', nargs='+', type=str, default=['yolor_p6.pt'], help='model.pt path(s)')
+    parser.add_argument('--weights', nargs='+', type=str, default=['agc2021.pt'], help='model.pt path(s)')
     parser.add_argument('--data', type=str, default='data/agc2021.yaml', help='*.data path')
     parser.add_argument('--batch-size', type=int, default=8, help='size of each image batch')
     parser.add_argument('--img-size', type=int, default=1280, help='inference size (pixels)')
