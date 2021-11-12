@@ -193,7 +193,11 @@ def test(data,
             # Append to pycocotools JSON dictionary
             if save_json:
                 # [{"image_id": 42, "category_id": 18, "bbox": [258.15, 41.29, 348.26, 243.78], "score": 0.236}, ...
-                image_id = int(path.stem) if path.stem.isnumeric() else path.stem
+                if isinstance(path.stem, str):
+                    image_string = path.stem.split('_')[1]
+                    image_id = int(image_string)
+                else:
+                    image_id = int(path.stem) if path.stem.isnumeric() else path.stem
                 box = pred[:, :4].clone()  # xyxy
                 scale_coords(img[si].shape[1:], box, shapes[si][0], shapes[si][1])  # to original shape
                 box = xyxy2xywh(box)  # xywh
@@ -218,7 +222,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='main.py')
     parser.add_argument('--weights', nargs='+', type=str, default=['agc2021.pt'], help='model.pt path(s)')
     parser.add_argument('--data', type=str, default='data/agc2021.yaml', help='*.data path')
-    parser.add_argument('--batch-size', type=int, default=8, help='size of each image batch')
+    parser.add_argument('--batch-size', type=int, default=4, help='size of each image batch')
     parser.add_argument('--img-size', type=int, default=1280, help='inference size (pixels)')
     parser.add_argument('--conf-thres', type=float, default=0.001, help='object confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=0.65, help='IOU threshold for NMS')
