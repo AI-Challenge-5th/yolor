@@ -1,18 +1,18 @@
 import torch.nn.functional as F
 
-from utils.general import *
+from .general import *
 
 import torch
 from torch import nn
 
 try:
     from mish_cuda import MishCuda as Mish
-    
+
 except:
     class Mish(nn.Module):  # https://github.com/digantamisra98/Mish
         def forward(self, x):
             return x * F.softplus(x).tanh()
-    
+
 try:
     from pytorch_wavelets import DWTForward, DWTInverse
 
@@ -25,7 +25,7 @@ try:
             b,c,w,h = x.shape
             yl, yh = self.xfm(x)
             return torch.cat([yl/2., yh[0].view(b,-1,w//2,h//2)/2.+.5], 1)
-        
+
 except: # using Reorg instead
     class DWT(nn.Module):
         def forward(self, x):
@@ -346,8 +346,8 @@ class DeformConv2d(nn.Module):
         x_offset = x_offset.contiguous().view(b, c, h*ks, w*ks)
 
         return x_offset
-    
-    
+
+
 class GAP(nn.Module):
     def __init__(self):
         super(GAP, self).__init__()
@@ -355,8 +355,8 @@ class GAP(nn.Module):
     def forward(self, x):
         #b, c, _, _ = x.size()        
         return self.avg_pool(x)#.view(b, c)
-    
-    
+
+
 class Silence(nn.Module):
     def __init__(self):
         super(Silence, self).__init__()
@@ -462,7 +462,7 @@ class ScaleSpatial(nn.Module):  # weighted sum of 2 or more layers https://arxiv
     def forward(self, x, outputs):
         a = outputs[self.layers[0]]
         return x * a
-    
+
 
 class ImplicitA(nn.Module):
     def __init__(self, channel):
@@ -495,7 +495,7 @@ class ImplicitM(nn.Module):
 
     def forward(self):
         return self.implicit
-    
+
 
 
 class Implicit2DA(nn.Module):
@@ -529,6 +529,6 @@ class Implicit2DM(nn.Module):
 
     def forward(self):
         return self.implicit
+
     
-    
-    
+
